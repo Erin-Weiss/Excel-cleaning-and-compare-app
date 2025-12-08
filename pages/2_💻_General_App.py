@@ -584,7 +584,7 @@ def excel_cleaning_section(section_title: str, state_prefix: str):
             st.markdown("##### Start from a specific column letter")
             start_col_letter = st.text_input(
                 "Enter column letter to start from (for example C, D, or F)",
-                max_chars=3,
+                max_chars=1,
                 help="Columns before this will be dropped.",
                 key=f"start_col_{state_prefix}",
             ) or None
@@ -996,7 +996,7 @@ with col2:
                     st.session_state.combo = combo
                     st.session_state.combo_sorted = combo_sorted
 
-            # Always show results if present (so they stay visible after downloads)
+            # Always show results if present
             if (
                 'missing_from_excel_1' in st.session_state and
                 'missing_from_excel_2' in st.session_state and

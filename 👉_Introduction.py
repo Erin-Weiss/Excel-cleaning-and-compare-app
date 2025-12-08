@@ -106,7 +106,7 @@ def get_image_base64_and_style(path, max_width=900):
 
     # --- Convert PIL image to bytes once and base64-encode ---
     buffered = BytesIO()
-    img.save(buffered, format="PNG")  # keep format consistent
+    img.save(buffered, format="PNG")  
     base64_str = base64.b64encode(buffered.getvalue()).decode()
 
     style = f"width:{scale_w}px; height:{scale_h}px; object-fit:contain;"
