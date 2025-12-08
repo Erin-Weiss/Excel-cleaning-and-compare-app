@@ -16,7 +16,7 @@ st.set_page_config(
 )
 
 # -----------------------------
-# Core functions (unchanged logic)
+# Core functions
 # -----------------------------
 @st.cache_data
 def clean_excel(
