@@ -1,54 +1,46 @@
 # Import Libraries 
 import streamlit as st
 import requests
-
 import random
-import os
 import time
 from email_validator import validate_email, EmailNotValidError
 from captcha.image import ImageCaptcha
-from PIL import Image
 from streamlit_js_eval import streamlit_js_eval
 
-# Set up page
+# -----------------------------
+# Page setup
+# -----------------------------
 st.set_page_config(
     page_title="Contact",
     page_icon="✉️",
+    layout="wide",
 )
 
 st.sidebar.header("Contact")
 
-def wide_space_default():
-    st.set_page_config(layout="wide")
-
-wide_space_default()
-
 with st.sidebar:
     st.markdown("### Navigation")
     st.caption("Use the menu above to switch between pages.")
-    st.caption("You're on the **Contact** page. Reach out if you need help or have questions about the app.")
+    st.caption("You are on the **Contact** page. Reach out if you need help or have questions about the app.")
 
     with st.expander("ℹ️ How this page works", expanded=False):
         st.markdown(
             """
-            Use this page to get in touch regarding:
+Use this page to get in touch regarding:
 
-            - App support or troubleshooting  
-            - Feature requests  
-            - Bug reports  
-            - Questions about cleaning or comparison logic
+- App support or troubleshooting  
+- Feature requests  
+- Bug reports  
+- Questions about the cleaning or comparison logic  
 
-            I do my best to respond to inquiries as quickly as possible, but please note that replies may not be immediate.
+I do my best to respond to inquiries as quickly as possible, but please note that replies may not be immediate.
             """
         )
 
-
-
-# Formspree endpoint
+# -----------------------------
+# Formspree endpoint and CAPTCHA setup
+# -----------------------------
 FORMSPREE_ENDPOINT = "https://formspree.io/f/mkgzvwle"
-
-# Set wide layout
-st.set_page_config(layout="wide")
 
 # Define CAPTCHA character set
 CAPTCHA_OPTIONS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
@@ -60,17 +52,20 @@ def generate_captcha():
     return captcha_text, image
 
 # Initialize CAPTCHA in session
-if 'captcha_text' not in st.session_state:
+if "captcha_text" not in st.session_state:
     st.session_state.captcha_text, st.session_state.captcha_image = generate_captcha()
 
+# -----------------------------
 # Layout
+# -----------------------------
 col1, col2, col3, col4 = st.columns([3, 0.25, 1, 0.25])
 
 # CAPTCHA section
 with col3:
-    st.markdown("##### CAPTCHA Verification")
+    st.markdown("##### CAPTCHA verification")
     st.markdown(
-        '<p style="text-align: justify; font-size: 12px;">CAPTCHAs help protect this form from spam. Please enter the characters below.</p>',
+        '<p style="text-align: justify; font-size: 12px;">CAPTCHAs help protect this form from automated spam. '
+        'Please type the characters you see in the image below.</p>',
         unsafe_allow_html=True,
     )
 
@@ -83,16 +78,23 @@ with col3:
 
     captcha_input = st.text_input("Enter CAPTCHA")
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.write("")
+    st.write("")
 
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    st.markdown("#### Interested in **:rainbow[More?]**")
-    st.markdown("You can see some of my other work on my portfolio [here](https://erin-weiss.github.io)")
+    st.markdown("#### Interested in **:rainbow[more?]**")
+    st.markdown(
+        "You can see some of my other work on my portfolio "
+        "[here](https://erin-weiss.github.io)."
+    )
 
 # Contact form section
 with col1:
-    st.header("📬 Contact Me")
+    st.header("📬 Contact me")
+    st.write(
+        "If you have questions about this app, run into issues, or have ideas for improvements, "
+        "you can use this form to send a message."
+    )
+
     name = st.text_input("Your name*", max_chars=100)
     email = st.text_input("Your email*", max_chars=100)
     subject = st.text_input("Subject*", max_chars=150)
@@ -100,9 +102,9 @@ with col1:
 
     st.markdown('<p style="font-size: 13px;">* Required fields</p>', unsafe_allow_html=True)
 
-    if st.button("Send Message", type="primary"):
+    if st.button("Send message", type="primary"):
         if not name or not email or not subject or not message:
-            st.error("Please fill out all required fields.")
+            st.error("Please fill out all required fields before sending your message.")
         else:
             try:
                 # Validate email
@@ -110,7 +112,6 @@ with col1:
 
                 # CAPTCHA check
                 if captcha_input.upper() == st.session_state.captcha_text:
-                    # Submit form data to Formspree
                     data = {
                         "name": name,
                         "email": email,
@@ -125,18 +126,19 @@ with col1:
                     )
 
                     if response.status_code == 200:
-                        st.success("✅ Message sent successfully!")
+                        st.success("✅ Your message has been sent successfully.")
 
                         # Reset CAPTCHA
                         st.session_state.captcha_text, st.session_state.captcha_image = generate_captcha()
                         captcha_placeholder.image(st.session_state.captcha_image, use_container_width=True)
 
+                        # Brief pause and reload to clear the form
                         time.sleep(2)
                         streamlit_js_eval(js_expressions="parent.window.location.reload()")
                     else:
-                        st.error("⚠️ Failed to send. Please try again.")
+                        st.error("⚠️ The message could not be sent. Please try again.")
                         st.text(f"Error: {response.status_code} - {response.text}")
                 else:
-                    st.error("❌ CAPTCHA did not match.")
+                    st.error("❌ CAPTCHA did not match. Please try again.")
             except EmailNotValidError as e:
                 st.error(f"Invalid email address. {e}")
