@@ -3,12 +3,20 @@ import streamlit as st
 import pandas as pd
 import openpyxl
 import string
-import numpy as np
 import re
 from io import BytesIO
 
 # -----------------------------
-# Core functions
+# Page setup
+# -----------------------------
+st.set_page_config(
+    page_title="General Excel App",
+    page_icon="⎘",
+    layout="wide",
+)
+
+# -----------------------------
+# Core functions (unchanged logic)
 # -----------------------------
 @st.cache_data
 def clean_excel(
@@ -391,7 +399,7 @@ def excel_cleaning_section(section_title: str, state_prefix: str):
         st.warning("Please select an option above.")
         return st.session_state[cleaned_key]
 
-    # PATH A: Excel is already clean → simple upload & show
+    # PATH A: Excel is already clean → simple upload and show
     if isClean == ":rainbow[Yes]":
         uploaded_file_clean = st.file_uploader(
             f"Upload the clean Excel for {section_title}",
@@ -425,7 +433,10 @@ def excel_cleaning_section(section_title: str, state_prefix: str):
         return st.session_state[cleaned_key]
 
     # PATH B: Needs cleaning
-    with st.expander(f"⚙️ Cleaning setup – {section_title}", expanded=st.session_state[config_key]):
+    with st.expander(
+        f"⚙️ Cleaning setup for {section_title}",
+        expanded=st.session_state[config_key]
+    ):
 
         # Step 0: upload
         uploaded_file = st.file_uploader(
@@ -450,8 +461,10 @@ def excel_cleaning_section(section_title: str, state_prefix: str):
             st.error(f"Could not read sheet names: {e}")
             return st.session_state[cleaned_key]
 
-        st.markdown("#### Step 1 – What’s wrong with this sheet?")
-        st.caption("Check everything that applies. I’ll only ask follow-up questions for the items you select.")
+        st.markdown("#### Step 1: What is wrong with this sheet?")
+        st.caption(
+            "Check everything that applies. The app will only ask follow-up questions for the items you select."
+        )
 
         issue_options = [
             "Header row is not on row 1",
@@ -474,10 +487,10 @@ def excel_cleaning_section(section_title: str, state_prefix: str):
         )
 
         # Step 2: header row
-        st.markdown("#### Step 2 – Header row")
+        st.markdown("#### Step 2: Header row")
         st.caption(
-            "Tell me where the column headers are. "
-            "If they’re already on the first row of the sheet, leave this as 1."
+            "Tell the app where the column headers are. "
+            "If they are already on the first row of the sheet, leave this as 1."
         )
 
         header_row_guess = st.number_input(
@@ -492,22 +505,22 @@ def excel_cleaning_section(section_title: str, state_prefix: str):
         realign = "Do NOT realign rows (keep original alignment)" not in issues
 
         # Step 3: preview
-        st.markdown("#### Step 3 – Preview")
+        st.markdown("#### Step 3: Preview")
 
         st.markdown(
             """
 **How to use this preview**
 
-- **Tip** - When answering questions about the row number or column number, look at the **original excel instead of preview** for most accurate number. 
+- **Tip:** When answering questions about the row number or column number, it is usually best to look at the **original Excel file instead of the preview** for the most accurate numbers. 
 - If a **date column** shows anything other than dates (for example rows with words like `Totals`, `Grand Totals`, or other notes), you can:
   - Remove those rows later using **Drop rows by keywords** in Step 4, or  
   - Enforce a specific **date format** in the **Date column options** so that non-date values become empty and get dropped.
   - You may have to **go back to the previous step** to add those options in the drop down menu if they were not previously selected.
-- You can **ignore any `Unnamed:` columns** in this preview – those extra columns will be cleaned up later in the process.
-- **Any blank cells** in columns you want to **keep** must be filled with something for the cleaning process. Select **Fill missing values...** from the dropdown menu to accomplish this if needed. 
+- You can **ignore any `Unnamed:` columns** in this preview. Those extra columns will be cleaned up later in the process.
+- **Any blank cells** in columns you want to **keep** must be filled with something for the cleaning process. Select **Fill missing values in non-date columns** from the menu if you need to fill these values. 
 - The preview is mainly for:
   1. Confirming you picked the correct **header row**, and  
-  2. Spot-checking that the **date column**, other column values, and other headings look reasonable (no obvious junk or missing values).
+  2. Spot-checking that the **date column**, other column values, and headings look reasonable with no obvious junk or missing values.
 """
         )
 
@@ -555,7 +568,7 @@ def excel_cleaning_section(section_title: str, state_prefix: str):
         if "Skip extra rows at the bottom" in issues:
             st.markdown("##### Skip extra rows at the bottom")
             st.caption(
-                "Use this if there are totals, notes, or other junk rows after the useful data."
+                "Use this if there are totals, notes, or other rows after the useful data."
             )
             skip_num = st.number_input(
                 "What is the final row number you want to KEEP in the sheet?",
@@ -570,7 +583,7 @@ def excel_cleaning_section(section_title: str, state_prefix: str):
         if "Start from a specific column letter (drop left-side junk)" in issues:
             st.markdown("##### Start from a specific column letter")
             start_col_letter = st.text_input(
-                "Enter column letter to start from (e.g., C, D, F)",
+                "Enter column letter to start from (for example C, D, or F)",
                 max_chars=3,
                 help="Columns before this will be dropped.",
                 key=f"start_col_{state_prefix}",
@@ -608,7 +621,7 @@ If the date column contains text like `Totals`, `Grand Totals`, or other non-dat
 1. **Drop rows by keywords** (in a later section) to remove those rows completely.
 2. **Force a specific date format** here. Any value that doesn't match this format will be coerced to an empty date, and those rows can then be safely dropped.
 
-If you leave this as **“Let pandas infer from the data”**, it will try its best automatically, but you may end up with a few extra blank or strange dates if the column is very messy. In those cases, manually selecting the correct format is usually best.
+If you leave this as **“Let pandas infer from the data”**, the app will try its best automatically. If the column is very messy, manually selecting the correct format is usually more reliable.
 """
             )
             date_format_choice = st.selectbox(
@@ -636,17 +649,17 @@ If you leave this as **“Let pandas infer from the data”**, it will try its b
             elif date_format_choice == "December 2, 2025 (Month D, YYYY)":
                 date_format = "%B %d, %Y"
                 st.caption(
-                    "⚠️ If your data has ordinals like 'December 2nd 2025', "
-                    "it’s usually best to choose 'Let pandas infer from the data' instead, "
-                    "since explicit formats can’t represent the 'nd/th' parts."
+                    "⚠️ If your data has ordinals such as 'December 2nd 2025', "
+                    "it is usually better to choose 'Let pandas infer from the data' instead, "
+                    "because explicit formats cannot represent the 'nd' or 'th' parts."
                 )
             else:
                 custom_fmt = st.text_input(
                     "Enter custom date format",
-                    placeholder="e.g. %Y/%m/%d or %d-%b-%Y",
+                    placeholder="For example %Y/%m/%d or %d-%b-%Y",
                     help=(
-                        "Use Python datetime format codes, like %Y-%m-%d. "
-                        "Helpful source [here](https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior)."
+                        "Use Python datetime format codes, such as %Y-%m-%d. "
+                        "You can find a reference in the Python documentation for strftime and strptime [here](https://docs.python.org/3/library/datetime.html#strftime-and-strptime-behavior)."
                     ),
                     key=f"custom_date_fmt_{state_prefix}",
                 )
@@ -661,9 +674,9 @@ If you leave this as **“Let pandas infer from the data”**, it will try its b
 
             st.caption(
                 """
-            - **ffill** (forward fill): fill each empty date with the last non-empty date **above** it.  
-            - **bfill** (backward fill): fill each empty date with the next non-empty date **below** it.
-            """
+- **ffill** (forward fill) fills each empty date with the last non-empty date **above** it.  
+- **bfill** (backward fill) fills each empty date with the next non-empty date **below** it.
+"""
             )
 
         # 4d. Track which dates were filled
@@ -675,16 +688,16 @@ If you leave this as **“Let pandas infer from the data”**, it will try its b
             st.markdown("##### Drop rows by keywords")
             st.caption(
                 """
-Use this when the date column (or any other column) has extra rows like subtotals, grand totals, notes, or headers.
+Use this when the date column (or any other column) has extra rows such as subtotals, grand totals, notes, or headers.
 
 - Matching is **case-insensitive**.
-- It looks for the keyword **anywhere in the row**.
-- Typing just `totals` will remove rows containing **`Totals`**, **`Grand Totals`**, **`Project Totals`**, etc.
+- The tool looks for the keyword **anywhere in the row**.
+- Typing just `totals` will remove rows containing **`Totals`**, **`Grand Totals`**, **`Project Totals`**, and similar phrases.
 """
             )
             kw_text = st.text_area(
                 "Enter keywords to drop (comma-separated)",
-                placeholder="e.g. totals, notes, header",
+                placeholder="For example totals, notes, header",
                 key=f"drop_keywords_{state_prefix}",
             )
             drop_keywords_list = [
@@ -695,7 +708,7 @@ Use this when the date column (or any other column) has extra rows like subtotal
         if "Limit to first N columns" in issues:
             st.markdown("##### Limit to first N columns")
             n_cols_val = st.number_input(
-                "How many columns do you want to keep (from the left)?",
+                "How many columns do you want to keep from the left?",
                 min_value=1,
                 step=1,
                 key=f"n_cols_{state_prefix}",
@@ -716,7 +729,7 @@ Use this when the date column (or any other column) has extra rows like subtotal
             else:
                 cols_text = st.text_input(
                     "Column names to fill (comma-separated)",
-                    placeholder="e.g. UNIT OF MEASURE, tax",
+                    placeholder="For example UNIT OF MEASURE, tax",
                     key=f"fill_cols_text_{state_prefix}",
                 )
                 fill_cols_list = [
@@ -726,7 +739,7 @@ Use this when the date column (or any other column) has extra rows like subtotal
             fill_methods_dict = {}
 
             if fill_cols_list:
-                st.caption("Configure how each selected column should be filled:")
+                st.caption("Configure how each selected column should be filled.")
                 for col in fill_cols_list:
                     with st.expander(f"Fill options for '{col}'", expanded=False):
                         method_choice = st.radio(
@@ -741,9 +754,9 @@ Use this when the date column (or any other column) has extra rows like subtotal
 
                         st.caption(
                             """
-                        - **ffill** (forward fill): fill each empty date with the last non-empty date **above** it.  
-                        - **bfill** (backward fill): fill each empty date with the next non-empty date **below** it.
-                        """
+- **ffill** (forward fill) fills each empty cell with the last non-empty value **above** it.  
+- **bfill** (backward fill) fills each empty cell with the next non-empty value **below** it.
+"""
                         )
 
                         if method_choice == "Forward fill (ffill)":
@@ -754,7 +767,7 @@ Use this when the date column (or any other column) has extra rows like subtotal
                             const_val = st.text_input(
                                 f"Constant value for '{col}'",
                                 key=f"fill_const_{state_prefix}_{col}",
-                                placeholder="e.g. Unknown, 0, No",
+                                placeholder="For example Unknown, 0, or No",
                             )
                             fill_methods_dict[col] = const_val
 
@@ -830,69 +843,73 @@ Use this when the date column (or any other column) has extra rows like subtotal
     return st.session_state[cleaned_key]
 
 # -----------------------------
-# Page setup & main layout
+# Main layout
 # -----------------------------
-st.set_page_config(
-    page_title="General Excel App",
-    page_icon="⎘",
-)
-
-def wide_space_default():
-    st.set_page_config(layout="wide")
-
-wide_space_default()
 
 col1, col2, col3 = st.columns([1, 1.5, 1])
 
 with col2:
     st.image("pages/gen-gif.gif")
 
-st.markdown("<h1 style='text-align: center'>General Excel Cleaning and Comparison App</h1>", unsafe_allow_html=True)
-
-st.markdown("<br>", unsafe_allow_html=True)
+st.markdown(
+    "<h1 style='text-align: center'>General Excel Cleaning and Comparison App</h1>",
+    unsafe_allow_html=True,
+)
+st.write("")
 
 with st.sidebar:
     st.markdown("### Navigation")
     st.caption("Use the menu above to switch between pages.")
-    st.caption("You're on the **General App** page. Use this tool for standard Excel cleaning and comparison tasks.")
+    st.caption(
+        "You are on the **General App** page. Use this tool for standard Excel cleaning and comparison tasks."
+    )
 
     with st.expander("ℹ️ How this page works", expanded=False):
         st.markdown(
             """
-            This page provides a flexible version of the Excel comparison tool.
+This page provides a flexible version of the Excel cleaning and comparison tool.
 
-            **General Workflow**
-            1. Upload **Excel File 1**.  
-            2. Upload **Excel File 2**.  
-            3. Choose the columns to match between the two files.  
-            4. (Optional) Select additional columns to compare for differences.  
-            5. Review missing or mismatched entries.  
-            6. Download results as an Excel file.
+**General workflow**
 
-            This version is ideal for workflows **not tied to Aftermath formatting**.
+**Cleaning Section** - Upload clean or to be cleaned Excels
+
+1. Upload **Excel File 1**.  
+2. Upload **Excel File 2**.  
+3. (Optional) Download cleaned Excel files
+
+**Comparison Section** (Section Optional)
+
+1. Choose the columns to match between the two files.  
+2. (Optional) Select additional columns to compare for differences.
+3. Review missing or mismatched entries.  
+4. Download the comparison results as an Excel file.
+
+This version is ideal for workflows that are not tied to the Aftermath formatting.
             """
         )
 
-
 st.markdown(
     """
-    This General Excel Cleaning and Comparison web application, similar to the Aftermath Disaster Recovery app, processes and cleans multiple Excel files before comparing them. Unlike the Aftermath version, this application is designed to be more flexible and general, catering to a wider range of use cases. This allows users to apply the tool to various scenarios beyond a single specific case, but it requires more inputs from the user.
+This General Excel Cleaning and Comparison app processes and cleans Excel files and then compares them. It follows the same two step flow as the Aftermath Disaster Recovery app but is designed to be more flexible so it can support a wider range of layouts. It can be used in many situations outside the original Aftermath project, although it does ask for a few more inputs from the user.
 
-    While this application can clean a broader spectrum of dirty Excel files compared to the Aftermath version, it is still limited to cleaning Excel files in an invoice format or similar structures. If you encounter any issues or have questions, refer to the tutorial for more information.
+The app is best suited for Excel files that come from invoices or similarly structured tables. It can handle many messy files, especially those converted from PDFs, but it is not meant to fix every possible Excel layout. If something does not work as expected, you can review the tutorial or make small manual adjustments before running the tool again.
 
-    In addition to its cleaning function, this application enables users to compare information between two clean Excel files as long as they share a unique identifier column (e.g., a specific product code). These clean Excel files can be either cleaned through the earlier process or provided by the user. Furthermore, the comparison feature allows users to compare multiple columns between each Excel if desired. 
+After cleaning, you can compare two Excel files that share a unique identifier column, such as a product code or ticket number. The two files can come from this cleaning step or be files that were already clean. You can also select multiple columns in each Excel file to compare so that the app can highlight differences between the two sources.
 
-    👈👈 Use the sidebar if you would like to see a **:rainbow[tutorial]**, have questions, or want to see the app for Aftermath Disaster Recovery.
+👈👈 Use the sidebar if you would like to open the **:rainbow[tutorial]**, read more details, or switch to the app created for Aftermath Disaster Recovery.
 """
 )
 
-st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<h2 style='text-align: center'>Excel Uploads and Questions</h2>", unsafe_allow_html=True)
-st.markdown("<br>", unsafe_allow_html=True)
+st.write("")
+st.markdown(
+    "<h2 style='text-align: center'>Excel uploads and questions</h2>",
+    unsafe_allow_html=True,
+)
+st.write("")
 
 st.markdown(
     """
-   In this section, you can upload either Excel files that require cleaning or already cleaned Excel files to compare. Afterward, you'll have the option to download the cleaned Excel files. Finally, you'll be able to view the comparison information and download an aggregated Excel file.
+In this section, you can upload Excel files that need cleaning or files that are already clean and ready for comparison. After the cleaning step, you can download the cleaned Excel files. At the end, you can view the comparison results and download an Excel file that contains all comparison outputs.
 """
 )
 
@@ -912,19 +929,21 @@ with col2:
     df2 = excel_cleaning_section("Second Excel (Source B)", "excel2")
 
     st.markdown("---")
-    st.markdown("### Step 3 – Compare the two Excels")
+    st.markdown("### Step 3: Compare the two Excels")
 
     with st.expander("🔍 Comparison options", expanded=True):
         if df1 is not None and df2 is not None:
-            st.write("Select the key columns and (optionally) value columns to compare. You can tweak this later.")
+            st.write(
+                "Select the key columns and optional value columns to compare. You can adjust these choices and rerun the comparison if needed."
+            )
 
             key_col_1 = st.selectbox(
-                "Key / ID column in First Excel",
+                "Key or ID column in First Excel",
                 df1.columns,
                 key="key_col_1",
             )
             key_col_2 = st.selectbox(
-                "Key / ID column in Second Excel",
+                "Key or ID column in Second Excel",
                 df2.columns,
                 key="key_col_2",
             )
@@ -940,12 +959,12 @@ with col2:
                 key="compare_cols_2",
             )
 
-            # NEW: toggle for case-insensitive matching of key / ID values
+            # Toggle for case-insensitive matching of key or ID values
             case_insensitive = st.checkbox(
-                "Ignore differences in letter case when matching key / ID values",
+                "Ignore differences in letter case when matching key or ID values",
                 value=True,
                 key="case_insensitive_match",
-                help="If checked, IDs like 'abc123' and 'ABC123' will be treated as the same.",
+                help="If checked, IDs such as 'abc123' and 'ABC123' will be treated as the same.",
             )
 
             if (compare_cols_1 and not compare_cols_2) or (compare_cols_2 and not compare_cols_1):
@@ -957,7 +976,7 @@ with col2:
                 compare2 = compare_cols_2 if compare_cols_2 else None
 
                 if st.button("Run comparison", key="run_comparison"):
-                    with st.spinner("Comparing…"):
+                    with st.spinner("Comparing..."):
                         missing_from_excel_1, missing_from_excel_2, diff_qty_df, combo = compare_dfs(
                             df1,
                             key_col_1,
@@ -965,12 +984,12 @@ with col2:
                             key_col_2,
                             compare1=compare1,
                             compare2=compare2,
-                            case_insensitive_match=case_insensitive,  # <-- passes toggle through
+                            case_insensitive_match=case_insensitive,
                         )
 
                     combo_sorted = combo.sort_values(by='Missing list')
 
-                    # Store in session so they persist after reruns / downloads
+                    # Store in session so they persist after reruns and downloads
                     st.session_state.missing_from_excel_1 = missing_from_excel_1
                     st.session_state.missing_from_excel_2 = missing_from_excel_2
                     st.session_state.diff_qty_df = diff_qty_df
@@ -1009,10 +1028,9 @@ with col2:
                 )
 
         else:
-            st.info("Please finish cleaning / loading both Excels above to enable comparison.")
+            st.info("Please finish cleaning or loading both Excels above to enable comparison.")
 
-
-    st.markdown("#### Download All Comparison Dataframes into Excel File:")
+    st.markdown("#### Download all comparison DataFrames into an Excel file")
 
     if (
         'missing_from_excel_1' in st.session_state and
@@ -1055,7 +1073,7 @@ with col2:
         output.seek(0)
 
         st.download_button(
-            label="📥 Download Comparison Excel",
+            label="📥 Download comparison Excel",
             data=output,
             file_name="comparison_results.xlsx"
         )
