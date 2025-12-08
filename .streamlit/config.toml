@@ -1,0 +1,8 @@
+[theme]
+base="light"
+backgroundColor="#f3f6fb"
+secondaryBackgroundColor="#dae3f3"
+
+[theme.sidebar]
+# Primary accent color.
+backgroundColor = "#1431A6"
