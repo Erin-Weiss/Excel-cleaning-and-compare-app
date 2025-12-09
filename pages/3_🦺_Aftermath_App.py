@@ -322,12 +322,6 @@ with col2:
                                    skip_last_rows=True, 
                                    skip_num=skip_num)
 
-                st.session_state.df1 = df1
-                st.dataframe(df1)
-
-                st.write("After checking the cleaned invoice above, confirm that it looks correct. "
-                "If something is off, you can adjust your answers and run the cleaning step again.")
-
                 excel_bytes = to_excel(df1)
 
                 # Create download button
