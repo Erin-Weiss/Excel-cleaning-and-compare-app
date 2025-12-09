@@ -1,0 +1,63 @@
+# ---- macOS system files ----
+.DS_Store
+pages/.DS_Store
+.AppleDouble
+.LSOverride
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+
+# Byte-compiled / cache
+*.pyc
+.cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+env*/
+
+# ---- Streamlit ----
+.streamlit/secrets.toml
+.streamlit/config.toml
+# Local Streamlit temp/state files
+.streamlit/**/credentials.toml
+.streamlit/**/state.json
+.streamlit/**/local_storage.json
+
+# Ignore static file build caches 
+frontend/node_modules/
+frontend/build/
+**/node_modules/
+**/build/
+
+# ---- Packaging / build ----
+build/
+dist/
+downloads/
+.eggs/
+*.egg-info/
+
+# ---- Jupyter (if you use notebooks for data prep) ----
+.ipynb_checkpoints/
+
+# ---- Logs ----
+*.log
+
+# ---- VS Code ----
+.vscode/
+.history/
+*.code-workspace
+
+# ---- JetBrains ----
+.idea/
+
+# ---- OS/Editor backup files ----
+*~
+*.swp
+*.swo
+
