@@ -17,15 +17,10 @@ def img_to_base64(path):
         return base64.b64encode(data).decode("utf-8")
 
 img64_1 = img_to_base64("pages/invoice-headings.jpg")
-
 img64_2 = img_to_base64("pages/last-line.jpg")
-
 img64_3 = img_to_base64("pages/invoice-1-screenshot.jpg")
-
 img64_4 = img_to_base64("pages/invoice-empty-row.jpg")
-
 img64_5 = img_to_base64("pages/row-fixed.jpg")
-
 img64_6 = img_to_base64("pages/num-cols.jpg")
 
 # Set up collapsible PDF
@@ -41,7 +36,8 @@ zip_path = "pages/Sample_Excels.zip"
 with open(zip_path, "rb") as f:
     zip_bytes = f.read()
 
-st.markdown("""
+st.markdown(
+    """
     <style>
     /* Target Streamlit's download button wrapper */
     div.stDownloadButton > button {
@@ -59,7 +55,9 @@ st.markdown("""
         border-color: #0F3B23 !important;
     }
     </style>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True,
+)
 
 # --- Sidebar header ---
 st.sidebar.header("Tutorial")
@@ -72,9 +70,9 @@ with st.sidebar:
     with st.expander("ℹ️ How this page works", expanded=False):
         st.markdown(
             """
-            1. Read each section in order.  
-            2. Download sample files to practice.  
-            3. When you are comfortable, move to the **General App** or **Aftermath App**.
+1. Read each section in order.  
+2. Download the sample files to practice.  
+3. When you are comfortable, move to the **General App** or **Aftermath App**.
             """
         )
 
@@ -90,11 +88,11 @@ st.markdown(
     """
 This tutorial walks you through how to use both apps and provides downloadable sample data and invoices you can experiment with. Aftermath has granted permission to use any data displayed on this website, and some details in the sample files have been anonymized.
 
-These tutorials, together with the sample files in the ZIP, give users a clear path to:
+These tutorials, together with the sample files in the ZIP, give you a clear path to:
 
 - See how the cleaning logic behaves in real scenarios.  
-- Understand how keys and comparison columns work.  
-- Compare the General App’s flexibility to the more streamlined Aftermath App.
+- Understand how key columns and comparison columns work.  
+- Compare the flexibility of the General App to the more streamlined Aftermath App.
 """
 )
 
@@ -129,11 +127,17 @@ st.markdown("<h3 style='text-align: left'>Information</h3>", unsafe_allow_html=T
 with st.expander("**Click to expand or collapse**", expanded=True):
     st.markdown(
         """
-The General App is designed for flexible use across a variety of spreadsheets. It has two main parts. The first part helps turn messy Excel files into structured data that you can either download or pass directly into the comparison step. This is especially helpful when invoices have been converted from PDF to Excel and contain extra spaces, inconsistent formatting, or other issues that can cause errors when analyzing the spreadsheet.
+The General App is designed for flexible use across a variety of spreadsheets. It has two main parts:
 
-It is important to note that this app does not attempt to automatically clean every possible messy Excel layout. Instead, it focuses on formats that are similar to invoices or related documents. If you encounter an unexpected issue during the cleaning process, you may need to fix that specific part of the file manually before continuing to the comparison step.
+1. A **cleaning step** that turns messy Excel files into structured data you can download or pass directly into the comparison step. This is especially helpful when invoices have been converted from PDF to Excel and contain extra spaces, inconsistent formatting, or other issues that can cause errors.
+2. A **comparison step** that looks for differences between two cleaned files.
 
-The comparison step requires two key pieces of information from each Excel file. First, you choose the column that contains the shared IDs. This is the column that connects the two spreadsheets, such as a SKU, ticket number, or other unique identifier. Second, you select the column in each file that you want to compare. These comparison columns should represent the same type of information, such as the price of a product or the reported weight, so that the tool can highlight any differences between the two files.
+This app does not attempt to automatically clean every possible Excel layout. Instead, it focuses on formats that are similar to invoices or related documents. If you run into an unexpected issue during the cleaning process, you may need to fix that specific part of the file manually before continuing to the comparison step.
+
+The comparison step needs information from each Excel file:
+
+- The **ID column** (required), which contains the shared IDs that link the two spreadsheets. Examples include a SKU, ticket number, or other unique identifier.  
+- One or more **comparison columns** (optional) in each file. These columns should represent the same type of information (for example, price, weight, or quantity) so the tool can highlight any differences between the two files.
         """
     )
 
@@ -162,80 +166,79 @@ You can use **Pair 1** and **Pair 2** to run the Aftermath workflow through the 
 
 1. Upload `Dirty-Invoice-Aftermath-1.xlsx` into the **First Excel (Source A)** cleaning section.  
 2. In **Step 1 – What is wrong with this sheet?**, select:  
-   - “Header row is not on row 1”  
-   - “Skip extra rows at the bottom”  
-   - “There is a date column to clean/standardize”  
-   - “Drop rows containing certain keywords”  
-   - “Limit to first N columns”  
+   - `Header row is not on row 1`  
+   - `Skip extra rows at the bottom`  
+   - `There is a date column to clean/standardize`  
+   - `Drop rows containing certain keywords`  
+   - `Limit to first N columns`  
 3. Set the following options:
 
    - **Header row is not on row 1**  
      - Header row: `25`  
 
-    *Note*: You can see that the correct header values are in the header row in the picture below. They are between the `unnamed` headings that will be removed later and can be ignored in the preview.
-"""
+     *Note*: You can see that the correct header values are in row `25` in the picture below. They appear between the `Unnamed` headings, which will be removed later and can be ignored in the preview.
+        """
     )
 
     st.markdown(
         f"""
-     <p align="center">
+<p align="center">
     <img src="data:image/jpeg;base64,{img64_1}" width="700">
-    </p>
+</p>
 
-    <p style="text-align: center; color: gray; font-size: 0.9em;">
-        Correct selection of header row
-    </p>
-    """,
-    unsafe_allow_html=True
+<p style="text-align: center; color: gray; font-size: 0.9em;">
+    Correct selection of header row
+</p>
+""",
+        unsafe_allow_html=True
     )
 
     st.markdown(
         """
-     
-        - **Skip extra rows at the bottom**  
-            - Final row to keep: `304`  
+- **Skip extra rows at the bottom**  
+  - Final row to keep: `304`  
 
-     *Note*: You can see that the section within the red box is unrelated data to the data above it. This can be removed by selecting the last useful line of data, which in this case is row `304` (underlined in green). Theoretically, you could also select row `309` since the “Drop rows containing certain keywords” will get rid of the rows with those values, but it is easier and more accurate to select `304`.
-     """
+  *Note*: In the image below, the section inside the red box is unrelated to the data above it. You can remove it by selecting the last useful line of data, which in this case is row `304` (underlined in green). In theory you could also select row `309`, since “Drop rows containing certain keywords” will remove the rows with those values, but selecting `304` is easier and more precise.
+        """
     )
 
     st.markdown(
         f"""
-     <p align="center">
+<p align="center">
     <img src="data:image/jpeg;base64,{img64_2}" width="700">
-    </p>
+</p>
 
-    <p style="text-align: center; color: gray; font-size: 0.9em;">
-        Last useful line of data (underlined in green) and extraneous data (in red box)
-    </p>
-    """,
-    unsafe_allow_html=True
+<p style="text-align: center; color: gray; font-size: 0.9em;">
+    Last useful line of data (underlined in green) and extraneous data (in red box)
+</p>
+""",
+        unsafe_allow_html=True
     )
 
     st.markdown(
         """
-   - **There is a date column to clean/standardize**  
-     - Date column: `Auto-detect from columns` or explicitly `Date:`  
-     - Date format: `01/31/2024 (MM/DD/YYYY)` or any option that is **not** `Let pandas infer from the data` in this case. 
-     - Fill method: `ffill` (forward fill). In this sample there are no missing dates, so either choice works.  
+- **There is a date column to clean/standardize**  
+  - Date column: `Auto-detect from columns` or explicitly `Date:`  
+  - Date format: `01/31/2024 (MM/DD/YYYY)` or any option that is **not** `Let pandas infer from the data` in this case.  
+  - Fill method: `ffill` (forward fill). In this sample there are no missing dates, so either choice works.
 
-     *Note*: In this file, certain numeric values slide into the date column (see first picture below). By forcing a specific date format, those irregular rows become completely empty in the date column and can be dropped during cleaning. Otherwise, if nothing is done with those numbers, there will be a fake date added and a mostly empty row (see second picture below). Keep situations like this in mind for your own Excel cleaning. Corrected version in final picture below.
-     """
+  *Note*: In this file, certain numeric values slide into the date column (see the first picture below). By forcing a specific date format, those irregular rows become completely empty in the date column and can be dropped during cleaning. If nothing is done with those numbers, they will turn into fake dates and leave a mostly empty row (second picture). The final picture shows the corrected version after cleaning. Keep situations like this in mind for your own Excel cleaning.
+        """
     )
 
     st.write("")
 
     st.markdown(
         f"""
-     <p align="center">
+<p align="center">
     <img src="data:image/jpeg;base64,{img64_3}" width="700">
-    </p>
+</p>
 
-    <p style="text-align: center; color: gray; font-size: 0.9em;">
-        Number spanning all columns that needs to be deleted
-    </p>
-    """,
-    unsafe_allow_html=True
+<p style="text-align: center; color: gray; font-size: 0.9em;">
+    Number spanning all columns that needs to be deleted
+</p>
+""",
+        unsafe_allow_html=True
     )
 
     st.write("")
@@ -243,15 +246,15 @@ You can use **Pair 1** and **Pair 2** to run the Aftermath workflow through the 
 
     st.markdown(
         f"""
-     <p align="center">
+<p align="center">
     <img src="data:image/jpeg;base64,{img64_4}" width="700">
-    </p>
+</p>
 
-    <p style="text-align: center; color: gray; font-size: 0.9em;">
-        Number turned into date if not removed properly
-    </p>
-    """,
-    unsafe_allow_html=True
+<p style="text-align: center; color: gray; font-size: 0.9em;">
+    Number turned into date if not removed properly
+</p>
+""",
+        unsafe_allow_html=True
     )
 
     st.write("")
@@ -259,25 +262,25 @@ You can use **Pair 1** and **Pair 2** to run the Aftermath workflow through the 
 
     st.markdown(
         f"""
-     <p align="center">
+<p align="center">
     <img src="data:image/jpeg;base64,{img64_5}" width="700">
-    </p>
+</p>
 
-    <p style="text-align: center; color: gray; font-size: 0.9em;">
-        Row removed after number correctly removed using date option
-    </p>
-    """,
-    unsafe_allow_html=True
+<p style="text-align: center; color: gray; font-size: 0.9em;">
+    Row removed after number correctly removed using date option
+</p>
+""",
+        unsafe_allow_html=True
     )
 
     st.markdown(
         """
-   - **Drop rows containing certain keywords**  
-     - Keywords: `totals`  
-       This will also catch strings such as “Grand Totals”.
+- **Drop rows containing certain keywords**  
+  - Keywords: `totals`  
+    This will also catch strings such as `Grand Totals`.
 
-   - **Limit to first N columns**  
-     - Number of columns: `8`
+- **Limit to first N columns**  
+  - Number of columns: `8`
 
 4. Run the cleaning step.  
 5. The cleaned invoice should look the same as `invoice1-cleaned_excel1.xlsx`.
@@ -286,7 +289,7 @@ You can use **Pair 1** and **Pair 2** to run the Aftermath workflow through the 
 
 1. Upload `Aftermath-Monitor-Data-1.xlsx` into the **Second Excel (Source B)** cleaning section.  
 2. In **Step 1 – What is wrong with this sheet?**, select:  
-   - “Do NOT realign rows (keep original alignment)”  
+   - `Do NOT realign rows (keep original alignment)`  
      (This keeps the monitor data in its original column layout.)  
 3. Leave other cleaning options off unless you see a specific problem.  
 4. Run the cleaning step.  
@@ -294,16 +297,16 @@ You can use **Pair 1** and **Pair 2** to run the Aftermath workflow through the 
 
 **Step 3: Compare the two files**
 
-1. Scroll to **Step 3: Compare the two Excels**.  
+1. Scroll to **Step 3 – Compare the two Excels**.  
 2. Choose the key columns:
 
    - Key or ID column in First Excel: `FEMA Ticket #`  
-   - Key or ID column in Second Excel: `Ticket Number`
+   - Key or ID column in Second Excel: `Ticket Number`  
 
 3. Choose the columns to compare:
 
    - From First Excel: `Calculated Qty`  
-   - From Second Excel: `Quantity`
+   - From Second Excel: `Quantity`  
 
 4. Leave the “Ignore differences in letter case” option checked.  
 5. Run the comparison and review:
@@ -313,7 +316,7 @@ You can use **Pair 1** and **Pair 2** to run the Aftermath workflow through the 
    - Entries with different quantities between the two files.  
    - The combined list of ticket IDs missing from one or both files.
 
-6. If desired, download `comparison_results1.xlsx` using the download button.
+6. If you like, download `comparison_results1.xlsx` using the download button.
 
 ---
 
@@ -325,10 +328,10 @@ Pair 2 follows the same pattern with slightly different header row and skipping 
 
 1. Upload `Dirty-Invoice-Aftermath-2.xlsx` into **First Excel (Source A)**.  
 2. In **Step 1 – What is wrong with this sheet?**, select:  
-   - “Header row is not on row 1”  
-   - “There is a date column to clean/standardize”  
-   - “Drop rows containing certain keywords”  
-   - “Limit to first N columns”  
+   - `Header row is not on row 1`  
+   - `There is a date column to clean/standardize`  
+   - `Drop rows containing certain keywords`  
+   - `Limit to first N columns`  
 3. Set the following options:
 
    - Header row: `21`  
@@ -344,7 +347,7 @@ Pair 2 follows the same pattern with slightly different header row and skipping 
 
 1. Upload `Aftermath-Monitor-Data-2.xlsx` into **Second Excel (Source B)**.  
 2. In **Step 1 – What is wrong with this sheet?**, select:  
-   - “Do NOT realign rows (keep original alignment)”  
+   - `Do NOT realign rows (keep original alignment)`  
 3. Run the cleaning step and confirm it matches `monitor2-cleaned_excel2.xlsx`.
 
 **Step 3: Compare**
@@ -375,11 +378,11 @@ This example shows how to compare two invoice files that use different but relat
 
 1. Upload `Comparison-invoice-part1.xlsx` into **First Excel (Source A)**.  
 2. In **Step 1 – What is wrong with this sheet?**, select:  
-   - “Header row is not on row 1”  
-   - “Skip extra rows at the bottom”  
-   - “Limit to first N columns”  
-   - “Fill missing values in non-date columns”  
-   - (Optional) “Track which values were filled”  
+   - `Header row is not on row 1`  
+   - `Skip extra rows at the bottom`  
+   - `Limit to first N columns`  
+   - `Fill missing values in non-date columns`  
+   - (Optional) `Track which values were filled`  
 3. Set the following options:
 
    - Header row: `16`  
@@ -387,9 +390,9 @@ This example shows how to compare two invoice files that use different but relat
    - Limit to first N columns: `8`  
    - Fill missing values in non-date columns:  
      - Column `UNIT OF MEASURE`  
-       - Method: “Use a constant value” set to `Unknown` if you want to match example. 
+       - Method: “Use a constant value” set to `Unknown` if you want to match the example.  
      - Column `TAX`  
-       - Method: “Use a constant value” set to `No` if you want to match example. 
+       - Method: “Use a constant value” set to `No` if you want to match the example.  
 
 4. Run the cleaning step. The result should match `comparison1-cleaned_excel1.xlsx`.
 
@@ -397,44 +400,43 @@ This example shows how to compare two invoice files that use different but relat
 
 1. Upload `Comparison-invoice-part2.xlsx` into **Second Excel (Source B)**.  
 2. In **Step 1 – What is wrong with this sheet?**, select:  
-   - “Header row is not on row 1”  
-   - “Skip extra rows at the bottom”  
-   - “Start from a specific column letter (drop left-side junk)”  
-   - “Limit to first N columns”  
+   - `Header row is not on row 1`  
+   - `Skip extra rows at the bottom`  
+   - `Start from a specific column letter (drop left-side junk)`  
+   - `Limit to first N columns`  
 3. Set the following options:
 
    - Header row: `18`  
    - Final row to keep: `23`  
    - Start from column letter: `B` (uppercase or lowercase is fine)  
-   - Limit to first N columns: `8` 
-   
-   *Note*: The headers we are trying to isolate are the ones in the red box. Below, you can see the letters that correspond to the columns in the Excel sheet. You select `B` as the column that you want to start, and from that starting point, you count how many total columns you want in your dataframe. In this case that number is `8`.
-   """
+   - Limit to first N columns: `8`  
+
+   *Note*: The headers you are trying to isolate are the ones inside the red box in the image below. The letters at the bottom correspond to Excel columns. You select `B` as the column where you want to start, and from that starting point you count how many total columns you want in your dataframe. In this case that number is `8`.
+        """
     )
 
     st.write("")
 
     st.markdown(
         f"""
-     <p align="center">
+<p align="center">
     <img src="data:image/jpeg;base64,{img64_6}" width="700">
-    </p>
+</p>
 
-    <p style="text-align: center; color: gray; font-size: 0.9em;">
-        Dirty invoice with column labels and desired columns numbered
-    </p>
-    """,
-    unsafe_allow_html=True
+<p style="text-align: center; color: gray; font-size: 0.9em;">
+    Dirty invoice with column labels and desired columns numbered
+</p>
+""",
+        unsafe_allow_html=True
     )
 
     st.markdown(
         """
-   
 4. Run the cleaning step and confirm it matches `comparison2-cleaned_excel2.xlsx`.
 
 **Step 3: Compare the two cleaned files**
 
-1. In **Step 3: Compare the two Excels**, set:
+1. In **Step 3 – Compare the two Excels**, set:
 
    - Key or ID column in First Excel: `PART NUMBER`  
    - Key or ID column in Second Excel: `Description`  
@@ -444,7 +446,7 @@ This example shows how to compare two invoice files that use different but relat
    - From First Excel: `Title`, `QTY`, `UNIT PRICE`  
    - From Second Excel: `Title`, `Quantity`, `Rate`  
 
-3. Make sure **“Ignore differences in letter case”** is checked to match example.  
+3. Make sure **“Ignore differences in letter case”** is checked to match the example.  
 4. Run the comparison and review the results. They should match the structure of `comparison_results3.xlsx`.
 
 ---
@@ -457,13 +459,13 @@ These examples are intended to practice the cleaning step without comparison.
 
 1. Upload `Dirty-invoice-test-1.xlsx` into **First Excel (Source A)**.  
 2. In **Step 1 – What is wrong with this sheet?**, select:  
-   - “Header row is not on row 1”  
-   - “Skip extra rows at the bottom”  
-   - “There is a date column to clean/standardize”  
-   - “Limit to first N columns”  
-   - “Fill missing values in non-date columns”  
-   - (Optional) “Track which values were filled”  
-   - (Optional) “Track which dates were filled”  
+   - `Header row is not on row 1`  
+   - `Skip extra rows at the bottom`  
+   - `There is a date column to clean/standardize`  
+   - `Limit to first N columns`  
+   - `Fill missing values in non-date columns`  
+   - (Optional) `Track which values were filled`  
+   - (Optional) `Track which dates were filled`  
 
 3. Set the options:
 
@@ -477,7 +479,7 @@ These examples are intended to practice the cleaning step without comparison.
    - Limit to first N columns: `8`  
    - Fill missing values in non-date columns:  
      - `UNIT OF MEASURE` → constant value `Unknown`  
-     - `TAX` → constant value `No`
+     - `TAX` → constant value `No`  
 
 4. Run the cleaning step. The result should match `General1-cleaned_excel1.xlsx`.
 
@@ -487,12 +489,12 @@ These examples are intended to practice the cleaning step without comparison.
 
 1. Upload `Dirty-invoice-test-2.xlsx` into **First Excel (Source A)**.  
 2. In **Step 1 – What is wrong with this sheet?**, select:  
-   - “Header row is not on row 1”  
-   - “Skip extra rows at the bottom”  
-   - “Start from a specific column letter (drop left-side junk)”  
-   - “There is a date column to clean/standardize”  
-   - “Limit to first N columns”  
-   - (Optional) “Track which dates were filled”  
+   - `Header row is not on row 1`  
+   - `Skip extra rows at the bottom`  
+   - `Start from a specific column letter (drop left-side junk)`  
+   - `There is a date column to clean/standardize`  
+   - `Limit to first N columns`  
+   - (Optional) `Track which dates were filled`  
 
 3. Set the options:
 
@@ -504,12 +506,11 @@ These examples are intended to practice the cleaning step without comparison.
      - `Let pandas infer from the data` **or**  
      - `01/31/2024 (MM/DD/YYYY)`  
    - Date fill: `ffill`  
-   - Limit to first N columns: `8`
+   - Limit to first N columns: `8`  
 
 4. Run the cleaning step. The result should match `General2-cleaned_excel1.xlsx`.
 
 These cleaning-only scenarios are useful for experimenting with different combinations of options and seeing how the cleaned output changes.
-
         """
     )
 
@@ -526,7 +527,7 @@ st.markdown("<h3 style='text-align: left'>Information</h3>", unsafe_allow_html=T
 with st.expander("**Click to expand or collapse**", expanded=True):
     st.markdown(
         """
-The Aftermath App is a specialized version of the tool created for Aftermath Disaster Recovery. It was designed to be more streamlined, based on the fact that the two Excel files they work with follow a consistent structure. The monitor data has a nearly identical layout each time, and the invoices usually follow a similar format, with only the values changing from file to file.
+The Aftermath App is a specialized version of the tool created for Aftermath Disaster Recovery. It was designed to be more streamlined because the two Excel files they work with follow a consistent structure. The monitor data has a nearly identical layout each time, and the invoices usually follow a similar format, with only the values changing from file to file.
 
 When invoices are converted from PDF to Excel, occasional formatting issues can still appear, and this app includes logic to handle many of those cases. Because the inputs are well understood, the goal was to ask the user as few questions as possible. The app makes more assumptions about the layout and column names, which speeds up the workflow for users who work with the same types of files repeatedly.
         """
@@ -568,7 +569,7 @@ You can use **Pair 1** and **Pair 2** from the tutorial ZIP to walk through the 
    - Standardize the `Date:` column using the built-in logic.  
    - Realign values to the left and keep the first 8 important columns.
 
-7. Review the preview. It should look match `invoice1-cleaned_excel1.xlsx`.  
+7. Review the preview. It should match `invoice1-cleaned_excel1.xlsx`.  
 8. Download the cleaned invoice if you want a copy.
 
 ##### Step 2: Load the monitor data
@@ -587,17 +588,10 @@ You can use **Pair 1** and **Pair 2** from the tutorial ZIP to walk through the 
 
 3. Review the results:
 
-   - **Entries missing from Excel 1 (Invoice Excel)**  
-     Rows present in monitor data but not found in the invoice.  
-
-   - **Entries missing from Excel 2 (Monitor Excel)**  
-     Rows present in the invoice but not found in the monitor file.  
-
-   - **Entries with different quantities between the two Excels**  
-     Ticket numbers that appear in both files but have different quantities.  
-
-   - **Entries missing from both Excels in one list**  
-     Combined list of ticket IDs that are missing in one or the other.
+   - **Entries missing from Excel 1 (Invoice Excel)** – rows present in monitor data but not found in the invoice.  
+   - **Entries missing from Excel 2 (Monitor Excel)** – rows present in the invoice but not found in the monitor file.  
+   - **Entries with different quantities between the two Excels** – ticket numbers that appear in both files but have different quantities.  
+   - **Entries missing from both Excels in one list** – a combined list of ticket IDs that are missing in one or the other.
 
 4. Use the **Download all DataFrames into Excel file** section to create a combined Excel file with all the outputs. This should look like `comparison_results1.xlsx`.
 
@@ -624,7 +618,7 @@ You can use **Pair 1** and **Pair 2** from the tutorial ZIP to walk through the 
 
    - Start the data at row 21.  
    - Keep all remaining rows.  
-   - Clean and standardize the `Date:` column.
+   - Clean and standardize the `Date:` column.  
    - Realign values to the left and keep the first 8 important columns.
 
 6. Review the cleaned result. It should resemble `invoice2-cleaned_excel1.xlsx`. Download it if you need a copy.
