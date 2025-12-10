@@ -57,7 +57,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
+# --- Introduction ---
 st.markdown("<h2 style='text-align: center'>Introduction</h2>", unsafe_allow_html=True)
 st.write("")
 
@@ -90,6 +90,10 @@ with col2:
 
         """
     )
+
+# =======================
+# Image Carousel Section
+# =======================
 
 st.write("")
 st.markdown("<h2 style='text-align: center'>🧼 Cleaning</h2>", unsafe_allow_html=True)
@@ -169,7 +173,7 @@ for i, item in enumerate(image_data):
 autoplay_interval = 5000  # milliseconds
 pause_on_hover = "hover"
 
-# === Final HTML ===
+# === Final Carousel HTML ===
 carousel_html = f"""
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -229,9 +233,10 @@ carousel_html = f"""
 </div>
 """
 
-# === Show in Streamlit ===
+# === Show Carousel in Streamlit ===
 components.html(carousel_html, height=max_slide_height + 15)
 
+# === Carousel Explanation ===
 col1, col2, col3 = st.columns([0.25, 3, 0.25])
 with col2:
     st.markdown(
@@ -239,6 +244,10 @@ with col2:
         Cleaning the data first is essential as it ensures the computer can correctly interpret the rows, columns, and values before running any comparisons. It also makes the cleaned Excel file easy to download and reuse for your own analysis.
         """
     )
+
+# =======================
+# Table Section
+# =======================
 
 st.markdown("<h2 style='text-align: center'>🧾 Excel Comparison Features</h2>", unsafe_allow_html=True)
 st.write("")
