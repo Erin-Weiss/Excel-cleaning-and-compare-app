@@ -40,7 +40,11 @@ I do my best to respond to inquiries as quickly as possible, but please note tha
 # -----------------------------
 # Formspree endpoint and CAPTCHA setup
 # -----------------------------
-FORMSPREE_ENDPOINT = "https://formspree.io/f/mkgzvwle"
+try:
+    FORMSPREE_ENDPOINT = st.secrets["formspree_endpoint"]
+except KeyError:
+    st.error("Form endpoint is not configured. Please set 'formspree_endpoint' in Streamlit secrets.")
+    st.stop()
 
 # Define CAPTCHA character set
 CAPTCHA_OPTIONS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"

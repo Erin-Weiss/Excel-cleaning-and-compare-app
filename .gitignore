@@ -23,7 +23,6 @@ env*/
 
 # ---- Streamlit ----
 .streamlit/secrets.toml
-.streamlit/config.toml
 # Local Streamlit temp/state files
 .streamlit/**/credentials.toml
 .streamlit/**/state.json
