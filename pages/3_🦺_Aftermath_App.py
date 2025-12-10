@@ -322,14 +322,6 @@ with col2:
                                    skip_last_rows=True, 
                                    skip_num=skip_num)
 
-                excel_bytes = to_excel(df1)
-
-                # Create download button
-                st.download_button(
-                    label="📥 Download Cleaned Invoice Excel",
-                    data=excel_bytes,
-                    file_name='cleaned_invoice.xlsx'
-                    )
 
             else:
                 df1 = cleanInvoice(uploaded_file, row, 8)
