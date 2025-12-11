@@ -105,6 +105,6 @@ Together, these choices create a workflow where users can **experiment safely**,
 
 - **Live Streamlit App:** [Excel Cleaning & Comparison App](https://excel-cleaning-and-compare-app.streamlit.app)
 - **GitHub Repository:** [View Source Code](https://github.com/Erin-Weiss/Excel-cleaning-and-compare-app)
-- **Portfolio Page:** Will insert when available 
+- **Portfolio Page:** [View on Portfolio](https://erin-weiss.github.io/articles/Excel-Cleaning.html)
 - **Sample Files (Tutorial ZIP):** Included directly in the app’s [Tutorial page](https://excel-cleaning-and-compare-app.streamlit.app/Tutorial)
 
