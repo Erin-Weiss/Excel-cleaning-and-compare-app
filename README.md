@@ -27,16 +27,15 @@ This project was built around **real-world messy spreadsheets first**, and polis
 1. **Start from the workflow, not the code.**  
    The app was shaped around a concrete use case: comparing **invoice Excel files converted from PDF** against **monitor data**. Instead of assuming clean, rectangular tables, the logic was designed to tolerate header noise, extra rows, shifted columns, and inconsistent date formats. All cleaning options in the General App grew out of specific failure modes seen in these files.
 
-2. **Separate “guided” and “flexible” tools.**  
+2. **Separate a specific and general use-case.**  
    To balance convenience and generality, the app is split into two layers:  
    - The **Aftermath App** encodes a known workflow with fixed column names and assumptions about layout. It asks just a few questions (header row, last useful row) and then applies a consistent cleaning and comparison pipeline, making it fast and repeatable for Aftermath Disaster Recovery.  
-   - The **General App** reuses the same underlying ideas but exposes more configuration. It turns cleaning into a guided form: users describe what’s wrong with each sheet (header row, extra rows, date issues, missing values), and only then are the corresponding options shown. This keeps the interface approachable while still covering a wide range of layouts.
+   - The **General App** reuses the same underlying ideas but allows for more configuration. It turns cleaning into a guided form: users describe what’s wrong with each sheet (header row, extra rows, date issues, missing values), and only then are the corresponding options shown. This keeps the interface approachable while still covering a wide range of layouts.
 
 3. **Make the logic transparent and reproducible.**  
-   At each stage, the app aims to show exactly **what it’s doing** and to leave users with reusable artifacts:  
+   At each stage, the app aims to show exactly **what it’s doing**. The dedicated **Tutorial** page, with sample files and screenshots, mirrors the internal logic step-by-step so users can see how parameter choices (like header row, date format, or keywords to drop) affect the final results and shows users how to produce the following:  
    - Intermediate outputs (cleaned invoices, monitor data, and general cleaned files) are displayed in Streamlit and can be **downloaded as Excel**.  
    - Comparison results are broken into separate tables (missing from A, missing from B, mismatched values, combined missing IDs) and bundled into a **multi-sheet Excel file** for auditing and documentation.  
-   - A dedicated **Tutorial** page, with sample files and screenshots, mirrors the internal logic step-by-step so users can see how parameter choices (like header row, date format, or keywords to drop) affect the final results.
 
 Together, these choices create a workflow where users can **experiment safely**, understand how their data is being transformed, and then apply the same pattern to their own Excel files—either via the streamlined Aftermath App or the more general, configurable tool.
 
@@ -46,7 +45,7 @@ Together, these choices create a workflow where users can **experiment safely**,
 
 ### 🧼 Excel Cleaning
 - Handles extremely messy Excel files, especially those created from PDFs.  
-- Cleans headers, drops junk rows, realigns misaligned cells.  
+- Cleans headers, drops extra rows, realigns misaligned cells.  
 - Standardizes date columns and prevents “fake dates” from slipping through.  
 - Supports filling missing values with constants or forward/backward fill.  
 - Lets users track which values or dates were filled.  
