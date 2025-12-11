@@ -929,7 +929,7 @@ with col2:
     df2 = excel_cleaning_section("Second Excel (Source B)", "excel2")
 
     st.markdown("---")
-    st.markdown("### Step 3: Compare the two Excels")
+    st.markdown("### Compare the two Excels")
 
     with st.expander("🔍 Comparison options", expanded=True):
         if df1 is not None and df2 is not None:
